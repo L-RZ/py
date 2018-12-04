@@ -19,8 +19,8 @@ def count_FM_exon_disease(sub):
     for l_line in sub:
         tissue_l = l_line[3:37]
         disease_pval_l = l_line[43:67]
-        i_l = [t for t in range(tissue_l) if t != '-1']
-        j_l = [d for d in range(disease_pval_l) if d != '-1']
+        i_l = [i for i, t in enumerate(tissue_l) if t != '-1']
+        j_l = [j for j, d in enumerate(disease_pval_l) if d != '-1']
         for index in itertools.product(i_l, j_l):
             sub_res_array[index] = 1
     sub_res_array[sub_res_array > 0] = 1
@@ -33,7 +33,7 @@ sub = []
 header = f_FM_skipping.next()
 header_l = header.split()
 tissue_header_l = header_l[3:37]
-disease_header_ = [each.split('_')[1] for each in header_l[43:67]]
+disease_header_l = [each.split('_')[1] for each in header_l[43:67]]
 
 for line in f_FM_skipping:
     l_line = line.split()
@@ -53,6 +53,6 @@ for line in f_FM_skipping:
 else:
     res_array += count_FM_exon_disease(sub)
 
-df = pd.DataFrame(res_array)
+df = pd.DataFrame(res_array, index=tissue_header_l, columns=disease_header_l)
 df.to_csv(out_addr, sep='\t')
 
